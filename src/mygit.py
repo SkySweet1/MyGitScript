@@ -99,6 +99,36 @@ def getAllFiles(ignore_set):
 def getNextCommit():
 
 #возврат след номера комита
+#библиотеки: os
+
+    commits_path = ".mygit/commits"
+
+    if not os.path.exists(commits_path):
+        return 1
+    
+    existing = [int(d) for d in os.listdir(commits_path) if d.isdigit()]
+
+    return max(existing) + 1 if existing else 1
+    
+#   определяет номер след комита
+#   
+#   надо вернуть числовой номер папки + 1
+#   
+#   commits_path = ".mygit/commits"             путь к папке
+#   
+#   if not os.path.exists(commits_path): return 1
+#   проверка на сущесвование файла .mygit/commits
+#   если ее нету то возвращаем 1 (будет первым)
+#   
+#   [int(d) for d in os.listdir(commits_path) if d.isdigit()]
+#   
+#   os.listdir(commits_path)                    список имен которые лежат внутри .mygit/commits
+#   if d.isdigit()                              оставляет только имена которые состоят целиком из цифр  
+#   
+#   existing                                    список чисел
+#   
+#   return max(existing) + 1 if existing else 1
+#   если список не пустой то возвращает максимальный номер+1 
 
 def saveCommit():
 
