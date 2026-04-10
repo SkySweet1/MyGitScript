@@ -50,6 +50,23 @@ def needIgnored(path, ignore_set):
 #   
 #   если принадлежит то true, если ни один компонент не совпал то false
 
+def needIgnoredAdvanced(path, ignore_set):
+
+#переделаная версия needIgnored() только в одну строчку
+
+    return any(part in ignore_set for part in Path(path).parts)
+
+#   Path(path).parts :
+#           разделенный путь -> 'computer', 'foldef', 'main.py' <- имена
+#   part in ignore set:
+#           проверки на игнорируемые имена -> возврат true/false
+# 
+#   (part in ignore_set for part in Path(path).parts) -> это типо генератор но для булевых значений
+# 
+#   any():
+#           идиальная функция в питоне чтобы принимать в себя (part....)
+#           если хотябы одно значение будет равно true то any() вернет true  
+
 def getAllFiles(ignore_set):
 
 #возврат всех файлов в текущей дериктории (+игнорируемые)       надо обойти все файлы и вернуть список путей
