@@ -152,4 +152,48 @@ def cmdCheckout():
 
 def main():
 
-#main
+#основная функция
+#библиотеки: sys
+
+    if len(sys.argv) < 2:
+        print("use:")
+        print("python mygit.py init")
+        print("python mygit.py commit \"message\"")
+        print("python mygit.py checkout <id>")
+        
+        return
+    
+    command = sys.argv[1]
+
+    if command == "init":
+        cmdInit()
+
+    elif command == "commit":
+        if len(sys.argv) < 3:
+            print("identity commit's message")
+
+            return
+        cmdCommit(sys.argv[2])
+
+    elif command == "checkout":
+        if len(sys.argv) < 3:
+            print("identity commit's ID")
+            return 
+        cmdCheckout(sys.argv[2])
+
+    else:
+        print("unknown command")
+
+#   if len(sys.argv) < 2:                           проверка аргументов командной строки
+#   
+#   command = sys.argv[1]                           сохраняем первый аргумент
+#   
+#   проверяем на соответствие слов -> init commit checkout 
+#   
+#   if len(sys.argv) < 3:                           проверка на четвертое сообщение
+#   
+#   анологично в checkout но только мы проверяем на наличие ID
+#   
+#   ну и если видим везде соответсвие, то вызываем функции:
+#   cmdCommit("инициализация репозитория") 
+#   cmdCheckout("переключение на коммит")
