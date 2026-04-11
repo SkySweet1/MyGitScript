@@ -33,6 +33,34 @@ def loadIgnorelist():
 #  
 #   return ignore                           возвращаем список имен которые нужно игнорировать
 
+def loadIgnorelistAdvanced():
+
+#   переделаная версия loadIgnorelistAdvanced() 
+#   делает все одно и тоже но просто используеться генератор 
+
+    ignore = {".mygit"}
+
+    if os.path.exists(".mygitignore"):
+        with open(".mygitignore","r") as file:
+            ignore.update(line.strip() for line in file if line.strip() and not line.startswith("#"))
+    
+    return ignore
+
+#   ignore = {".mygit"}                         создаем множество с одним элементом
+#   
+#   if os.path.exists(".mygitignore"):          проверка на существование .mygitignore
+#   
+#   with open(".mygitignore","r") as file:      открываем для чтения
+#   
+#   ignore.update(line.strip() for line in file if line.strip() and not line.startswith("#"))
+#   генератор:
+#       for line in file                        перебор каждой строки
+#       line.strip()                            без пробелов и \n в начале и в конце
+#       and not line.startwith("#")             и не коментарий'
+#   ignore.update()                             добавляет все значения генератора в множество ignore
+#   
+#   и возвращаем его
+
 def needIgnored(path, ignore_set):
 
 #нужно ли игнорировать конкретный файл (по пути)
@@ -147,9 +175,22 @@ def getNextCommit():
 #   return max(existing) + 1 if existing else 1
 #   если список не пустой то возвращает максимальный номер+1 
 
-def saveCommit():
+def saveCommit(commitID, message, files):
 
 #сохранение всех файлов и метданных комита
+
+    commitsDr = ".mygit/commits"
+
+    exiting = [int(directory) for directory in os.listdir(commitsDr) if directory.isdigit()]
+
+    return max(exiting) + 1 if exiting else 1
+
+    #   os.listdir(commitsDr)                   список всего в ".mygit/commits"
+    #   directory.isdigit()                     оставляем только то что из цифр
+    #   int()                                   преобразуем строку в число 
+    # 
+    #   return max(exiting) + 1 if exiting else 1
+    #   если список не пустой (if exiting else 1) то берем самый большой номер + 1
 
 def restoreCommit():
 
@@ -159,9 +200,25 @@ def cmdInit():
 
 #инициализация репозитория
 
-def cmdCommit():
+def cmdCommit(message):
 
 #создание коммита
+
+    ignore = loadIgnorelist()
+
+    #   определяем номер след коммита
+
+    files = getAllFiles(ignore)
+
+    #    список игнорируемых файлов
+
+    commitID = getNextCommit()
+
+    #   определяем номер след коммита
+
+    saveCommit(commitID, message, files)
+
+    #   сохранение
 
 def cmdCheckout():
 
@@ -189,13 +246,19 @@ def main():
         if len(sys.argv) < 3:
             print("identity commit's message")
 
+            #   нужно создать новую папку для коммита
+            #   сохранить туда файлы
+
             return
+        
         cmdCommit(sys.argv[2])
 
     elif command == "checkout":
         if len(sys.argv) < 3:
             print("identity commit's ID")
+
             return 
+        
         cmdCheckout(sys.argv[2])
 
     else:
