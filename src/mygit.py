@@ -178,7 +178,7 @@ def getNextCommit():
 def saveCommit(commitID, message, files):
 
 #сохранение всех файлов и метданных комита
-
+#библотеки: os
     commitsDr = ".mygit/commits"
 
     exiting = [int(directory) for directory in os.listdir(commitsDr) if directory.isdigit()]
@@ -200,9 +200,14 @@ def cmdInit():
 
 #инициализация репозитория
 
+    os.makedirs(".mygit/commits")
+
+#   инициализация
+
 def cmdCommit(message):
 
 #создание коммита
+#библиотеки: покачто без проверок поэтому нет
 
     ignore = loadIgnorelist()
 
@@ -218,7 +223,7 @@ def cmdCommit(message):
 
     saveCommit(commitID, message, files)
 
-    #   сохранение
+    #   сохранеxние
 
 def cmdCheckout():
 
@@ -242,6 +247,8 @@ def main():
     if command == "init":
         cmdInit()
 
+            #   инициализация
+
     elif command == "commit":
         if len(sys.argv) < 3:
             print("identity commit's message")
@@ -256,6 +263,8 @@ def main():
     elif command == "checkout":
         if len(sys.argv) < 3:
             print("identity commit's ID")
+
+            #   переключение на коммит
 
             return 
         
