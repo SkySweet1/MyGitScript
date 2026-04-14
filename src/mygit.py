@@ -192,7 +192,7 @@ def saveCommit(commitID, message, files):
     #   return max(exiting) + 1 if exiting else 1
     #   если список не пустой (if exiting else 1) то берем самый большой номер + 1
 
-def removeEmptyDirectories(p):
+def removeEmptyDirectories():
 
 #   удаление пустых папок
 
@@ -215,7 +215,7 @@ def restoreCommit(commitID):
         if os.path.isfile(files):
             os.remove(files)
 
-    removeEmptyDirectories(".")
+    removeEmptyDirectories()
 
     copyFromCommit(filesDirectory)
 
@@ -233,9 +233,9 @@ def restoreCommit(commitID):
 #   if os.path.isfile(files):                                   проверка - файл не папка
 #   os.remove(files)                                            удаление
 # 
+#   removeEmptyDirectories()                                    удаление пустых папок    
 # 
-# 
-# 1
+#   copyFromCommit(filesDirectory)                              копирование всех файлов и папок из папки коммита
 
 def cmdInit():
 
