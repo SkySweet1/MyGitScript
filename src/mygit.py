@@ -192,9 +192,50 @@ def saveCommit(commitID, message, files):
     #   return max(exiting) + 1 if exiting else 1
     #   если список не пустой (if exiting else 1) то берем самый большой номер + 1
 
-def restoreCommit():
+def removeEmptyDirectories(p):
+
+#   удаление пустых папок
+
+def copyFromCommit(files_dir):
+
+#   копирование всех файлов и папок из папки коммита
+
+def restoreCommit(commitID):
 
 #замена директории на файлы из указанного комита
+
+    filesDirectory = f".mygit/commits/{commitID}/files"
+
+    ignore = loadIgnorelist()
+
+    currentFiles = getAllFiles(ignore)
+ 
+
+    for files in currentFiles:
+        if os.path.isfile(files):
+            os.remove(files)
+
+    removeEmptyDirectories(".")
+
+    copyFromCommit(filesDirectory)
+
+    print(f"commit {commitID} recovery was successful")
+
+    return True
+
+#   filesDirectory = f".mygit/commits/{commitID}/files"         путь к папке
+#   
+#   ignore = loadIgnorelist()                                   список игнорируемых файлов
+#   
+#   currentFiles = getAllFiles(ignore)                          список всех текущих неигнорируемых файлов
+#   
+#   далее перебираем все текущие файлы
+#   if os.path.isfile(files):                                   проверка - файл не папка
+#   os.remove(files)                                            удаление
+# 
+# 
+# 
+# 1
 
 def cmdInit():
 
