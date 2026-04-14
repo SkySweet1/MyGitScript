@@ -199,10 +199,21 @@ def restoreCommit():
 def cmdInit():
 
 #инициализация репозитория
+#библиотеки: os
+
+    if os.path.exists(".mygit"):
+        print("already exists")
+
+        return
 
     os.makedirs(".mygit/commits")
+    
+    print("repository inits")
 
 #   инициализация
+#   if os.path.exists(".mygit"):                провека на существование
+#   
+#   os.makedirs(".mygit/commits")               создаем папку .mygit и внутри папку commits
 
 def cmdCommit(message):
 
