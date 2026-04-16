@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 from pathlib import Path
 
 def loadIgnorelist():
@@ -234,9 +235,49 @@ def removeEmptyDirectories(path="."):
 #   использование данной команды позволяет, без удаления родительской папки, пройтись снизу вверх, обходя все дочерние папки для их удаления (если нужно)
 #   т.е. сначала дочерние а только потом родительская - иначе сначала удалиться родительская папка в которой могут содержаться нужные файлы (мы их не проверили еще)
 
-def copyFromCommit(files_dir):
+def copyFromCommit(filesDirectory):
 
 #   копирование всех файлов и папок из папки коммита
+#   библиотеки: os, shutil
+
+    if not os.path.exists(filesDirectory):
+        print(f"file in {filesDirectory} not found")
+
+        return False
+    
+    for item in os.listdir(filesDirectory):
+        source = os.path.join(filesDirectory, item)
+
+        #   source                путь
+
+        name = item
+
+        #   name                  куда копировать
+
+        if os.path.isfile(source):
+            shutil.copy2(source, name)
+
+        else:
+            if os.path.exists(name):
+                shutil.rmtree(name)
+            
+            shutil.copytree(source, name)
+        
+    return True
+
+#   if not os.path.exists(filesDirectory):          проверка на существование
+#   
+#   for item in os.listdir(filesDirectory):         идем по каждому имени файла -> item - каждое имя (поочередно)
+#   
+#   if os.path.isfile(source): -> True              если source файл
+#   shutil.copy2(source, name)                      то копируем его, перезаписывая все данные, если он уже существует (copy2 сохраняет метаданные)
+#   
+#   if os.path.isfile(name): -> False               если source папка
+#   if os.path.exists(name):                        проверка на существование
+#   shutil.rmtree(name)                             если существует то полностью удаляем со всем содержимым (rmtree())
+#   shutil.copytree(source, name)                   копируем новую папку с copytree()
+#       
+#   если все скопировалось успешно то возвращаем True
 
 def restoreCommit(commitID):
 
