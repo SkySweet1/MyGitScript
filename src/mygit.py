@@ -179,6 +179,7 @@ def saveCommit(commitID, message, files):
 
 #сохранение всех файлов и метданных комита
 #библотеки: os
+
     commitsDr = ".mygit/commits"
 
     exiting = [int(directory) for directory in os.listdir(commitsDr) if directory.isdigit()]
@@ -192,9 +193,46 @@ def saveCommit(commitID, message, files):
     #   return max(exiting) + 1 if exiting else 1
     #   если список не пустой (if exiting else 1) то берем самый большой номер + 1
 
-def removeEmptyDirectories():
+def removeEmptyDirectories(path="."):
 
 #   удаление пустых папок
+#   библиотеки: os
+
+    for root, directories, files in os.walk(path, topdown=False):
+
+    #   root                текущая папка
+    #   directories         имена подпапок внутри root
+    #   files               файлы внутри root
+
+        if ".mygit" in root:
+            continue
+
+        for directoryName in directories:
+            directoryPath = os.path.join(root, directoryName)
+
+            try:
+                if not os.listdir(directoryPath):
+                    os.rmdir(directoryPath)
+            
+            except OSError:
+                pass
+
+#   for root, directories, files in os.walk(path, topdown=False):
+#   os.walk()                                   обход всех папок и подпапок
+#   topdown=False                               снизу вверх 
+#   
+#   if ".mygit" in root: continue               если ".mygit" то пропускаем чтобы не удалить служебную папку
+#   
+#   for directoryName in directories:           перебор всех подпапок внутри root
+#   directoryPath = os.path.join(root, directoryName) - путь к каждой папке
+#   
+#   if not os.listdir(directoryPath): os.rmdir(directoryPath)
+#   os.listdir(directoryPath)                   содержимое папки
+#   если в папке ничего нет то удаляем папку
+#   
+#   topdown=False   
+#   использование данной команды позволяет, без удаления родительской папки, пройтись снизу вверх, обходя все дочерние папки для их удаления (если нужно)
+#   т.е. сначала дочерние а только потом родительская - иначе сначала удалиться родительская папка в которой могут содержаться нужные файлы (мы их не проверили еще)
 
 def copyFromCommit(files_dir):
 
@@ -206,7 +244,12 @@ def restoreCommit(commitID):
 
     filesDirectory = f".mygit/commits/{commitID}/files"
 
-    ignore = loadIgnorelist()
+    if not os.path.exists(filesDirectory):
+        print(f"{commitID} not found")
+
+        return False
+
+    ignore = loadIgnorelist(".")
 
     currentFiles = getAllFiles(ignore)
  
@@ -224,6 +267,8 @@ def restoreCommit(commitID):
     return True
 
 #   filesDirectory = f".mygit/commits/{commitID}/files"         путь к папке
+# 
+#   if not os.path.exists(filesDirectory):                  проверка на существование
 #   
 #   ignore = loadIgnorelist()                                   список игнорируемых файлов
 #   
