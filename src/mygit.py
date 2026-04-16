@@ -355,6 +355,13 @@ def cmdCommit(message):
 
     #    список игнорируемых файлов
 
+    if not files:
+        print("not files for commit")
+
+        return
+    
+    #   проверка на наличие файлов для сохранения
+
     commitID = getNextCommit()
 
     #   определяем номер след коммита
