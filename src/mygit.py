@@ -370,9 +370,32 @@ def cmdCommit(message):
 
     #   сохранеxние
 
-def cmdCheckout():
+def cmdCheckout(commitID):
 
 #переключение на коммит
+#библиотеки: os
+
+    if not os.path.exists(".mygit"):
+        print("repository not found")
+
+        return
+    
+    try:
+        commitID = int(commitID)
+    except ValueError:
+        print("invalid commit ID")
+
+        return
+    
+    restoreCommit(commitID)
+
+#   if not os.path.exists(".mygit"):              проверка на существование папки .mygit
+#
+#   commitID = int(commitID)                      преобразование строки в число (проверка на валидность)
+#
+#   except ValueError:                            если не число то выполнение идет сюда
+#   
+#   restoreCommit(commitID)                       восстановление комита с данным ID
 
 def main():
 
