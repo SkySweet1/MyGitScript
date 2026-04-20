@@ -220,6 +220,15 @@ def saveCommit(commitID, message, files):
 #   shutil.copy2(currFile, forCopy)                                         копирует файл из currFile в forCopy
 #   
 #   metaDate = {"id": commitID, "message": message, "files": files}         сохранение метаданных
+#   
+#   with open(os.path.join(commitsDirectory, "info.json"), "w") as file: json.dump(metaDate, file, indent=2)
+#   открываем файла info.json в папке коммита для записи
+#   json.dump() сохраняет словарь metaDate в json формат
+#   indent=2 делает json с отступами для читаемости
+#   
+#   with open(".mygit/head.txt", "w") as file: file.write(str(commitID))
+#   открываем файл head.txt (указывает на текущий коммит)
+#   и записываем туда номер коммита
 
 def removeEmptyDirectories(path="."):
 
