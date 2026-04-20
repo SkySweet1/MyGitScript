@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import shutil
 from pathlib import Path
 
@@ -112,7 +113,8 @@ def getAllFiles(ignore_set):
             full_path = os.path.join(root, file)
 
             if not needIgnored(full_path, ignore_set):
-                real_path = full_path[2:] if full_path.startswith("./") else full_path
+                real_path = os.path.relpath(full_path, start=".")
+                #   переделано - теперь и на macOS и на windows будет работать нормально
 
                 files_list.append(real_path)
     return files_list
@@ -179,20 +181,45 @@ def getNextCommit():
 def saveCommit(commitID, message, files):
 
 #сохранение всех файлов и метданных комита
-#библотеки: os
+#библотеки: os json shutil
 
-    commitsDr = ".mygit/commits"
+    commitsDirectory = f".mygit/commits/{commitID}"
 
-    exiting = [int(directory) for directory in os.listdir(commitsDr) if directory.isdigit()]
+    filesDirectory = os.path.join(commitsDirectory, "files")
 
-    return max(exiting) + 1 if exiting else 1
+    for filePath in files:
+        currFile = filePath
+        forCopy = os.path.join(filesDirectory, filePath)
 
-    #   os.listdir(commitsDr)                   список всего в ".mygit/commits"
-    #   directory.isdigit()                     оставляем только то что из цифр
-    #   int()                                   преобразуем строку в число 
-    # 
-    #   return max(exiting) + 1 if exiting else 1
-    #   если список не пустой (if exiting else 1) то берем самый большой номер + 1
+        os.makedirs(os.path.dirname(forCopy), exist_ok=True)
+
+        shutil.copy2(currFile, forCopy)
+
+    metaDate = {"id": commitID, "message": message, "files": files}
+
+    with open(os.path.join(commitsDirectory, "info.json"), "w") as file:
+        json.dump(metaDate, file, indent=2)
+    
+    with open(".mygit/head.txt", "w") as file:
+        file.write(str(commitID))
+
+#  переписать описание
+#   commitsDirectory = f".mygit/commits/{commitID}"                         путь к папке конкретного коммита
+#   
+#   filesDirectory = os.path.join(commitsDirectory, "files")                куть к папке где будут лежать скопированные файлы
+#   
+#   for filePath in files:                                                  перебор всех файлов которые нужно сохранить
+#   currFile = filePathq                                                    currFile - исходный файл
+#   forCopy = os.path.join(filesDirectory, filePath)                        forCopy - куда скопировать
+#   
+#   os.makedirs(os.path.dirname(forCopy), exist_ok=True)
+#   os.path.dirname(forCopy)                                                папка в которуб будем копировать
+#   os.makedirs()                                                           создаем эту папку
+#   exist_ok=True                                                           если папка уже есть то не выдаем ошибку
+#   
+#   shutil.copy2(currFile, forCopy)                                         копирует файл из currFile в forCopy
+#   
+#   metaDate = {"id": commitID, "message": message, "files": files}         сохранение метаданных
 
 def removeEmptyDirectories(path="."):
 
@@ -290,7 +317,7 @@ def restoreCommit(commitID):
 
         return False
 
-    ignore = loadIgnorelist(".")
+    ignore = loadIgnorelist()
 
     currentFiles = getAllFiles(ignore)
  
@@ -345,7 +372,17 @@ def cmdInit():
 def cmdCommit(message):
 
 #создание коммита
-#библиотеки: покачто без проверок поэтому нет
+#библиотеки: os
+
+    if not os.path.exists(".mygit"):
+        print("no inited youre repository! 'init' it ")
+
+        return
+    
+    if not message or not message.strip():
+        print("commit can not be empty")
+
+        return
 
     ignore = loadIgnorelist()
 
@@ -370,6 +407,23 @@ def cmdCommit(message):
 
     #   сохранеxние
 
+    print("commit created")
+
+#   if not os.path.exists(".mygit"):                проверка на существование репозитория (иначе не идем)
+#   
+#   if not message or not message.strip():          проверка сообщения (коммита)
+#   
+#   ignore = loadIgnorelist()                       загружаем игнорируемые файлы
+#   
+#   files = getAllFiles(ignore)                     собираем файлы для коммита
+#   
+#   if not files:                                   проверка на наличие файлов
+#     
+#   commitID = getNextCommit()
+#   saveCommit(commitID, message, files)
+#   
+#   создаем коммит
+
 def cmdCheckout(commitID):
 
 #переключение на коммит
@@ -387,6 +441,13 @@ def cmdCheckout(commitID):
 
         return
     
+    filesDirectory = f".mygit/commits/{commitID}/files"
+
+    if not os.path.exists(filesDirectory):
+        print("fault -> commit was not created")
+
+        return
+    
     restoreCommit(commitID)
 
 #   if not os.path.exists(".mygit"):              проверка на существование папки .mygit
@@ -395,6 +456,11 @@ def cmdCheckout(commitID):
 #
 #   except ValueError:                            если не число то выполнение идет сюда
 #   
+#UPD
+#   
+#   if not os.path.exists(filesDirectory):          проверка что коммит с таким ID реально существует
+#   
+#UPD   
 #   restoreCommit(commitID)                       восстановление комита с данным ID
 
 def main():
