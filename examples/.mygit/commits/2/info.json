@@ -1,0 +1,10 @@
+{
+  "id": 2,
+  "message": "delete file3 file",
+  "files": [
+    "file2.txt",
+    "file1.txt",
+    "mygit.py",
+    ".mygitignore"
+  ]
+}
