@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "message": "first",
+  "files": [
+    "mygit.py",
+    "txt.txt",
+    "core.py",
+    "commands.py",
+    "__pycache__/core.cpython-314.pyc",
+    "__pycache__/commands.cpython-314.pyc"
+  ]
+}
