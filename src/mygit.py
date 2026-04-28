@@ -395,7 +395,7 @@ def cmdCommit(message):
 
     ignore = loadIgnorelist()
 
-    #   определяем номер след коммита
+    #   ignore - имена файлов и папок которые нужно игнорировать
 
     files = getAllFiles(ignore)
 
